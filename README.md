@@ -2,7 +2,8 @@
 
 ### Youtube Link: https://youtu.be/Lm7CPRoEd-g
 ### Repository Link: https://github.com/Oruganti-Tejaswini/Cultural_Heritage
-### Google drive Link: https://drive.google.com/file/d/1doIFgYJ1_7PR4-4cZCaItZ_qtAIdTfHj/view?usp=sharing
+### Demo PPT: https://docs.google.com/presentation/d/1FZyUQwVLKre4WLkvpLiL2MCrMI59ixqj/edit?usp=sharing&ouid=111276424464680938370&rtpof=true&sd=true
+### Google drive demo Video Link: https://drive.google.com/file/d/1doIFgYJ1_7PR4-4cZCaItZ_qtAIdTfHj/view?usp=sharing
 
 ## Prerequisites:
 
