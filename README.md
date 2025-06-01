@@ -1,15 +1,17 @@
 # Akhand Bharat — AI-Powered Cultural Tourism Platform
 
-**Project for Hackathon Submission — Top 3 Focused Build**
+### Youtube Link: https://youtu.be/Lm7CPRoEd-g
+### Repository Link: https://github.com/Oruganti-Tejaswini/Cultural_Heritage
+### Google drive Link: https://drive.google.com/file/d/1doIFgYJ1_7PR4-4cZCaItZ_qtAIdTfHj/view?usp=sharing
 
 ## Prerequisites:
 
-** change snowflake credentials in .streamlit secrets.toml file**
+**change snowflake credentials in .streamlit secrets.toml file**
 
 **open path Cultural_Heritage/Cultural_Heritage/data/Dance_Forms and add dance_model.h5
 open path Cultural_Heritage/Cultural_Heritage/models and add dance_model.h5**
 
-** To run this project use - streamlit run Indian_Culture.py**
+**To run this project use - streamlit run Indian_Culture.py**
 
 
 ---
