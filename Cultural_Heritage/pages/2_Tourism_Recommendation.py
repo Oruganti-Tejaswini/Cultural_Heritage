@@ -8,31 +8,12 @@ from utils.common_css import add_logo
 
 st.set_page_config(page_title="🇮🇳 India Tourism Recommender", layout="wide")
 
-
 add_logo("data/BGs/logo_app.png")
-
-
-# ---------- HELPERS ----------
-def local_image_to_base64(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-
 
 # ---------- DATA HANDLER ----------
 class DataHandler:
     def __init__(self):
         self.places_df = data_loaders.load_places()
-        self.login_df = data_loaders.load_login_data()
-
-    def save_user(self, email, pwd):
-        new_user = pd.DataFrame({"Email": [email], "Password": [pwd]})
-        self.login_df = pd.concat([self.login_df, new_user], ignore_index=True)
-        data_loaders.save_login_data(self.login_df)
-
-    def validate_user(self, email, pwd):
-        user = self.login_df[self.login_df["Email"] == email]
-        return not user.empty and user.iloc[0]['Password'] == pwd
-
 
 # ---------- SEARCH ----------
 class SearchEngine:
@@ -62,75 +43,6 @@ class SearchEngine:
             elif isinstance(value, tuple) and len(value) == 2:
                 df = df[df[col].between(value[0], value[1])]
         return df
-
-
-# ---------- AUTH ----------
-class Auth:
-    def __init__(self, data_handler):
-        self.data_handler = data_handler
-
-    def login_ui(self):
-        self._add_login_background()
-        st.markdown("<h1 style='text-align:center;color:#FFD700;'>🔐 India Tourism Login</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center;color:#FFEEAA;'>Register/Login required to access recommendations</p>", unsafe_allow_html=True)
-
-        menu = st.radio("Choose", ["Login", "Register"], horizontal=True)
-        st.write(f"**Mode:** {menu}")
-
-        email = st.text_input("📧 Email")
-        pwd = st.text_input("🔑 DOB (YYYY-MM-DD)", placeholder="This will act as your password")
-
-        btn_label = "🚪 Login" if menu == "Login" else "📝 Register"
-        center_btn = st.columns([2, 3, 2])[1]
-
-        with center_btn:
-            if st.button(btn_label, use_container_width=True):
-                if menu == "Login":
-                    if self.data_handler.validate_user(email, pwd):
-                        st.session_state.logged_in = True
-                        st.session_state.user_email = email
-                        st.success("✅ Login successful!")
-                        st.experimental_rerun()
-                    else:
-                        st.error("❌ Incorrect credentials.")
-                else:
-                    if email in self.data_handler.login_df["Email"].values:
-                        st.warning("⚠️ Email already exists!")
-                    else:
-                        self.data_handler.save_user(email, pwd)
-                        st.success("✅ Registration successful! You can now login.")
-
-    def _add_login_background(self):
-        image_path = "data/BGs/login_bg.jpg"
-        with open(image_path, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode()
-
-        st.markdown(f"""
-            <style>
-            .stApp {{
-                background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.7)), 
-                            url("data:image/jpg;base64,{encoded}");
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                background-size: cover;
-            }}
-            </style>
-        """, unsafe_allow_html=True)
-
-        # Sidebar background
-        st.markdown(f"""
-            <style>
-            section[data-testid="stSidebar"] {{
-                background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
-                            url("data:image/jpg;base64,{encoded}");
-                background-position: center center;
-                background-repeat: no-repeat;
-                background-size: cover;
-            }}
-            </style>
-        """, unsafe_allow_html=True)
-
 
 # ---------- UI ----------
 class UI:
@@ -198,7 +110,6 @@ class UI:
 
         components.html(table_html, height=900, scrolling=True)
 
-
 # ---------- MAIN APP ----------
 class TourismApp:
     def __init__(self):
@@ -206,19 +117,9 @@ class TourismApp:
         self.search_engine = SearchEngine(self.data_handler.places_df)
         self.ui = UI()
 
-        if "logged_in" not in st.session_state:
-            st.session_state.logged_in = False
-        if "search_query" not in st.session_state:
-            st.session_state.search_query = ""
-        if "selected_state" not in st.session_state:
-            st.session_state.selected_state = "All States"
-
     def run(self):
-        if not st.session_state.logged_in:
-            Auth(self.data_handler).login_ui()
-        else:
-            self._add_dashboard_background()
-            self.dashboard()
+        self._add_dashboard_background()
+        self.dashboard()
 
     def _add_dashboard_background(self):
         image_path = "data/BGs/logo.png"
@@ -235,7 +136,6 @@ class TourismApp:
             </style>
         """, unsafe_allow_html=True)
 
-        # Sidebar background
         st.markdown(f"""
             <style>
             section[data-testid="stSidebar"] {{
@@ -251,15 +151,12 @@ class TourismApp:
     def dashboard(self):
         st.markdown("<h1 style='text-align:center;font-family:Orbitron;color:#FFD700;'>🌏 India Cultural & Tourism Explorer</h1>", unsafe_allow_html=True)
 
-        query = st.text_input("🔎 Search", value=st.session_state.search_query)
-        st.session_state.search_query = query
+        query = st.text_input("🔎 Search")
 
-        if not query.strip():
-            state_list = ["All States"] + sorted(self.data_handler.places_df["State"].unique())
-            selected_state = st.selectbox("Select State", state_list, index=state_list.index(st.session_state.selected_state))
-            st.session_state.selected_state = selected_state
+        state_list = ["All States"] + sorted(self.data_handler.places_df["State"].unique())
+        selected_state = st.selectbox("Select State", state_list)
 
-        filtered_df = self.search_engine.search(st.session_state.search_query, st.session_state.selected_state)
+        filtered_df = self.search_engine.search(query, selected_state)
 
         columns_available = [col for col in self.data_handler.places_df.columns if col not in ["Name", "City", "State"]]
         selected_cols = st.multiselect("Select additional fields to view:", columns_available, default=[])
@@ -280,13 +177,7 @@ class TourismApp:
 
             filtered_df = self.search_engine.dynamic_filter(filtered_df, filters)
 
-            st.divider()
-            if st.button("🚪 Logout"):
-                st.session_state.logged_in = False
-                st.experimental_rerun()
-
         self.ui.render(filtered_df, fields_to_display)
-
 
 # --------- RUN ------------
 TourismApp().run()
