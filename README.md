@@ -2,7 +2,7 @@
 
 **Project for Hackathon Submission — Top 3 Focused Build**
 
-##Prerequisites:
+## Prerequisites:
 
 ** change snowflake credentials in .streamlit secrets.toml file**
 
