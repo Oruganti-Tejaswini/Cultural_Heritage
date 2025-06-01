@@ -2,7 +2,10 @@
 
 **Project for Hackathon Submission — Top 3 Focused Build**
 
-**Prerequisites:**
+##Prerequisites:
+
+** change snowflake credentials in .streamlit secrets.toml file**
+
 **open path Cultural_Heritage/Cultural_Heritage/data/Dance_Forms and add dance_model.h5
 open path Cultural_Heritage/Cultural_Heritage/models and add dance_model.h5**
 
